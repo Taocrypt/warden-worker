@@ -1,4 +1,4 @@
-name: Keepalive - 保活脚本
+name: 保活脚本
 于:
   schedule:
     - cron: '0 0 */15 * *'  # 每15天自动跑一次
