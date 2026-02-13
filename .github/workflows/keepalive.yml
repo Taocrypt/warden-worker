@@ -1,5 +1,5 @@
-name: Keepalive - 防止60天无活动自动禁用
-on:
+name: Keepalive - 保活脚本
+于:
   schedule:
     - cron: '0 0 */15 * *'  # 每15天自动跑一次
   workflow_dispatch:        # 允许手动点一下跑
