@@ -1,0 +1,19 @@
+name: Keepalive - 防止60天无活动自动禁用
+on:
+  schedule:
+    - cron: '0 0 */15 * *'  # 每15天自动跑一次
+  workflow_dispatch:        # 允许手动点一下跑
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: 自动保活
+        run: |
+          echo "✅ 保活成功"
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/actions/workflows/keepalive.yml/enable
