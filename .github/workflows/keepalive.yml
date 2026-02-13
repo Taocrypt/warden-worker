@@ -1,5 +1,5 @@
-name: 保活脚本
-于:
+name: Keepalive - 防止60天无活动自动禁用
+on:
   schedule:
     - cron: '0 0 */15 * *'  # 每15天自动跑一次
   workflow_dispatch:        # 允许手动点一下跑
@@ -10,9 +10,9 @@ jobs:
     permissions:
       actions: write
     steps:
-      - name: 自动保活
+      - name: 自动保活（不修改代码、不提交）
         run: |
-          echo "✅ 保活成功"
+          echo "✅ 保活成功 - 重置60天计时器"
           curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
