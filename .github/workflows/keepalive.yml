@@ -2,18 +2,34 @@ name: Keepalive - 防止60天无活动自动禁用
 on:
   schedule:
     - cron: '0 0 */15 * *'  # 每15天自动跑一次
-  workflow_dispatch:        # 允许手动点一下跑
+  workflow_dispatch:        # 允许手动触发
 
 jobs:
   keepalive:
     runs-on: ubuntu-latest
     permissions:
+      contents: write       # 必须加这个，否则不能提交
       actions: write
+
     steps:
-      - name: 自动保活（不修改代码、不提交）
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: 配置 Git 身份
         run: |
-          echo "✅ 保活成功 - 重置60天计时器"
-          curl -X POST \
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: 空提交保活（真正激活仓库）
+        run: |
+          git commit --allow-empty -m "ci: keepalive $(date -I)"
+          git push
+
+      - name: 启用自身工作流
+        run: |
+          echo "✅ 保活成功"
+          curl -X PUT \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/${{ github.repository }}/actions/workflows/keepalive.yml/enable
